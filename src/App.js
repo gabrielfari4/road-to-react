@@ -1,6 +1,22 @@
+import { useState } from 'react';
 import './App.css';
 
-const list = [
+
+
+const title = 'you'
+
+const welcome = {
+  greeting: 'Hey',
+  title: 'React',
+}
+
+function getTitle(title) {
+  return title;
+}
+
+
+const App = () => {
+  const stories = [
     {
       title: 'React',
       url: 'https://reactjs.org/',
@@ -35,19 +51,11 @@ const list = [
     },
   ];
 
-const title = 'you'
+  const [searchTerm, setSearchTerm] = useState('');
 
-const welcome = {
-  greeting: 'Hey',
-  title: 'React',
-}
-
-function getTitle(title) {
-  return title;
-}
-
-
-function App() {
+  const handleChange = event => {
+    setSearchTerm(event.target.value)
+  }
 
   return (
     <div className="App">
@@ -56,20 +64,22 @@ function App() {
       </h1>
 
       <label htmlFor='search'>Search: </label>
-      <input id='search' type='text' />
+      <input id='search' type='text' onChange={handleChange}/>
+
+      <p>
+        Searching for <strong>{searchTerm}</strong>.
+      </p>
 
       <hr />
 
-      <List />
-      <List />
+      <List list={stories}/>
 
     </div>
   );
 }
 
-function List() {
-  return list.map(function(item) {
-    return (
+const List = props => 
+  props.list.map(item => (
       <div key={item.objectID}>
             <span>
               <a href={item.url}>{item.title}</a>
@@ -78,8 +88,7 @@ function List() {
             <span>{item.num_comments}, </span>
             <span>{item.points}</span>
       </div>
-    );
-  });
-}
+  ));
+
 
 export default App;
