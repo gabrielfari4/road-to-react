@@ -51,11 +51,8 @@ const App = () => {
     },
   ];
 
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const handleChange = event => {
-    setSearchTerm(event.target.value)
-  }
+  
+  
 
   return (
     <div className="App">
@@ -63,23 +60,44 @@ const App = () => {
         My Hacker Stories
       </h1>
 
-      <label htmlFor='search'>Search: </label>
-      <input id='search' type='text' onChange={handleChange}/>
-
-      <p>
-        Searching for <strong>{searchTerm}</strong>.
-      </p>
+      <Search />
 
       <hr />
 
+      {/* instância de componente enviando o prop do array stories */}
       <List list={stories}/>
 
     </div>
   );
 }
 
+
+const Search = () => {
+  // useState que define e altera o value do input search
+  const [searchTerm, setSearchTerm] = useState(''); 
+  // expressão de função que recebe o evento e utiliza o value deste para alterar o value do input
+  const handleChange = event => {
+    setSearchTerm(event.target.value)
+  }
+
+  return (
+    <div>
+      {/* a cada alteração no input, é chamada a função handleChange */}
+      <label htmlFor='search'>Search: </label>
+      <input id='search' type='text' onChange={handleChange}/>
+
+      {/* elemento que utiliza o valor do value do input */}
+      <p>
+        Searching for <strong>{searchTerm}</strong>.
+      </p>
+    </div>
+  )
+}
+
+// componente funcional que recebe a props (um array), faz o map para gerar elementos
 const List = props => 
   props.list.map(item => (
+      // key é um atributo importante a ser usado sempre com algum tipo de id único para garantir a fidelidade de organização de listas
       <div key={item.objectID}>
             <span>
               <a href={item.url}>{item.title}</a>
