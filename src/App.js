@@ -51,7 +51,18 @@ const App = () => {
     },
   ];
 
-  
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // callback function que recebe um evento
+  const handleSearch = event => {
+    setSearchTerm(event.target.value)
+  }
+
+  const searchedStories = stories.filter(story => {
+    return story.title
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+  })
   
 
   return (
@@ -60,35 +71,40 @@ const App = () => {
         My Hacker Stories
       </h1>
 
-      <Search />
+      {/* recebe o evento */}
+      <Search onSearch={handleSearch} />
 
       <hr />
 
       {/* instância de componente enviando o prop do array stories */}
-      <List list={stories}/>
+      <List list={searchedStories}/>
 
     </div>
   );
 }
 
 
-const Search = () => {
-  // useState que define e altera o value do input search
+const Search = props => {
+  /* // useState que define e altera o value do input search
   const [searchTerm, setSearchTerm] = useState(''); 
-  // expressão de função que recebe o evento e utiliza o value deste para alterar o value do input
+  // event handler - expressão de função que recebe o evento e utiliza o value deste para alterar o value do input
   const handleChange = event => {
     setSearchTerm(event.target.value)
-  }
+
+    // props que envia o evento para o atributo onSearch
+    props.onSearch(event)
+  } */
 
   return (
     <div>
-      {/* a cada alteração no input, é chamada a função handleChange */}
+      {/* antes: a cada alteração no input, é chamada a função handleChange */}
+      {/* depois: a cada alteração, a prop é chamada. Neste caso sendo o callback handler do App */}
       <label htmlFor='search'>Search: </label>
-      <input id='search' type='text' onChange={handleChange}/>
+      <input id='search' type='text' onChange={props.onSearch}/>
 
       {/* elemento que utiliza o valor do value do input */}
       <p>
-        Searching for <strong>{searchTerm}</strong>.
+        Searching for <strong>{props.onSearch}</strong>.
       </p>
     </div>
   )
