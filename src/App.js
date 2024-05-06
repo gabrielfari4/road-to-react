@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useEffect } from 'react';
 import './App.css';
 
 
@@ -51,11 +52,17 @@ const App = () => {
     },
   ];
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(
+    localStorage.getItem('search') || 'React'
+  );
+
+  useEffect(() => {
+    localStorage.setItem('search', searchTerm);
+  }, [searchTerm])
 
   // callback function que recebe um evento
   const handleSearch = event => {
-    setSearchTerm(event.target.value)
+    setSearchTerm(event.target.value);
   }
 
   const searchedStories = stories.filter(story => {
@@ -72,11 +79,12 @@ const App = () => {
       </h1>
 
       {/* recebe o evento */}
-      <Search onSearch={handleSearch} />
+      <Search search={searchTerm} onSearch={handleSearch} />
 
       <hr />
 
       {/* instância de componente enviando o prop do array stories */}
+      {/* enviando a variável que corresponde ao elemento da lista filtrado no search */}
       <List list={searchedStories}/>
 
     </div>
@@ -84,7 +92,7 @@ const App = () => {
 }
 
 
-const Search = props => {
+const Search = ({ search, onSearch }) => {
   /* // useState que define e altera o value do input search
   const [searchTerm, setSearchTerm] = useState(''); 
   // event handler - expressão de função que recebe o evento e utiliza o value deste para alterar o value do input
@@ -95,26 +103,35 @@ const Search = props => {
     props.onSearch(event)
   } */
 
+  
+
   return (
     <div>
       {/* antes: a cada alteração no input, é chamada a função handleChange */}
       {/* depois: a cada alteração, a prop é chamada. Neste caso sendo o callback handler do App */}
       <label htmlFor='search'>Search: </label>
-      <input id='search' type='text' onChange={props.onSearch}/>
+      <input id='search' 
+        type='text' 
+        value={search}
+        onChange={onSearch}/>
 
       {/* elemento que utiliza o valor do value do input */}
       <p>
-        Searching for <strong>{props.onSearch}</strong>.
+        Searching for <strong>{search}</strong>.
       </p>
     </div>
   )
 }
 
 // componente funcional que recebe a props (um array), faz o map para gerar elementos
-const List = props => 
-  props.list.map(item => (
+const List = ({ list }) => 
+  list.map(item => <Item key={item.objectID} item={item} />);
+    
+    
+    
+const Item = ({ item }) => (
       // key é um atributo importante a ser usado sempre com algum tipo de id único para garantir a fidelidade de organização de listas
-      <div key={item.objectID}>
+      <div>
             <span>
               <a href={item.url}>{item.title}</a>
             </span>
@@ -122,7 +139,7 @@ const List = props =>
             <span>{item.num_comments}, </span>
             <span>{item.points}</span>
       </div>
-  ));
+  );
 
 
 export default App;
