@@ -4,7 +4,7 @@ import './App.css';
 
 
 
-const title = 'you'
+/* const title = 'you'
 
 const welcome = {
   greeting: 'Hey',
@@ -13,7 +13,7 @@ const welcome = {
 
 function getTitle(title) {
   return title;
-}
+} */
 
 
 const App = () => {
@@ -52,10 +52,12 @@ const App = () => {
     },
   ];
 
+  // Ao renderizar o componente pela primeira vez o useState busca o estado inicial como o value da key search armazenada no localStorage anteriormente ou em caso de não haver nada armazenado mostra o estado inicial de searchTerm com o valor 'React'
   const [searchTerm, setSearchTerm] = useState(
     localStorage.getItem('search') || 'React'
   );
 
+  // useEffect administra o side-effect do componente que envolve a manipulação do localStorage. O primeiro argumento é a função = manipulação em si - do side=effect e o segundo argumento é o chamado array de dependência, que a cada vez que um elemento do array é modificado, a função de side=effect será chamada.
   useEffect(() => {
     localStorage.setItem('search', searchTerm);
   }, [searchTerm])
@@ -65,6 +67,7 @@ const App = () => {
     setSearchTerm(event.target.value);
   }
 
+  // constante que filtra o array e retorna um novo array caso o title do elemento inclua o que foi pesquisado no Search
   const searchedStories = stories.filter(story => {
     return story.title
       .toLowerCase()
@@ -79,7 +82,14 @@ const App = () => {
       </h1>
 
       {/* recebe o evento */}
-      <Search search={searchTerm} onSearch={handleSearch} />
+      {/* <Search search={searchTerm} onSearch={handleSearch} /> */}
+
+      <InputWithLabel
+        id="search"
+        label='Search'
+        value={searchTerm}
+        onInputChange={handleSearch}
+      />
 
       <hr />
 
@@ -91,9 +101,26 @@ const App = () => {
   );
 }
 
+const InputWithLabel = ({ id,
+  label,
+  value,
+  type = 'text',
+  onInputChange,}) => (
+  <>
+    <label htmlFor={id}>{label}: </label>
+    &nbsp;
+    <input
+      id={id}
+      type={type}
+      value={value}
+      onChange={onInputChange}
+      />
+  </>
+)
 
-const Search = ({ search, onSearch }) => {
-  /* // useState que define e altera o value do input search
+
+/* const Search = ({ search, onSearch }) => {
+  // useState que define e altera o value do input search
   const [searchTerm, setSearchTerm] = useState(''); 
   // event handler - expressão de função que recebe o evento e utiliza o value deste para alterar o value do input
   const handleChange = event => {
@@ -101,27 +128,25 @@ const Search = ({ search, onSearch }) => {
 
     // props que envia o evento para o atributo onSearch
     props.onSearch(event)
-  } */
-
-  
+  }
 
   return (
     <div>
-      {/* antes: a cada alteração no input, é chamada a função handleChange */}
-      {/* depois: a cada alteração, a prop é chamada. Neste caso sendo o callback handler do App */}
+      //antes: a cada alteração no input, é chamada a função handleChange
+      //depois: a cada alteração, a prop é chamada. Neste caso sendo o callback handler do App
       <label htmlFor='search'>Search: </label>
       <input id='search' 
         type='text' 
         value={search}
         onChange={onSearch}/>
 
-      {/* elemento que utiliza o valor do value do input */}
+      //elemento que utiliza o valor do value do input
       <p>
         Searching for <strong>{search}</strong>.
       </p>
     </div>
   )
-}
+} */
 
 // componente funcional que recebe a props (um array), faz o map para gerar elementos
 const List = ({ list }) => 
