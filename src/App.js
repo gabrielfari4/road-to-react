@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useEffect } from 'react';
 import './App.css';
 
@@ -15,47 +15,61 @@ function getTitle(title) {
   return title;
 } */
 
+const initialStories = [
+  {
+    title: 'React',
+    url: 'https://reactjs.org/',
+    author: 'Jordan Walke',
+    num_comments: 3,
+    points: 4,
+    objectID: 0,
+  },
+  {
+    title: 'Redux',
+    url: 'https://redux.js.org/',
+    author: 'Dan Abramov, Andrew Clark',
+    num_comments: 2,
+    points: 5,
+    objectID: 1,
+  },
+  {
+    title: 'The Lord of The Rings',
+    url: 'https://lotr.org/',
+    author: 'J.R.R. Tolkien',
+    num_comments: 10,
+    points: 5,
+    objectID: 2,
+  },
+  {
+    title: 'Manifesto Comunista',
+    url: 'https://marxists.org/',
+    author: 'Karl Marx, Friedrich Engels',
+    num_comments: 2,
+    points: 5,
+    objectID: 3,
+  },
+];
+
+const useSemiPersistentState = (key, initialState) => {}
 
 const App = () => {
-  const stories = [
-    {
-      title: 'React',
-      url: 'https://reactjs.org/',
-      author: 'Jordan Walke',
-      num_comments: 3,
-      points: 4,
-      objectID: 0,
-    },
-    {
-      title: 'Redux',
-      url: 'https://redux.js.org/',
-      author: 'Dan Abramov, Andrew Clark',
-      num_comments: 2,
-      points: 5,
-      objectID: 1,
-    },
-    {
-      title: 'The Lord of The Rings',
-      url: 'https://lotr.org/',
-      author: 'J.R.R. Tolkien',
-      num_comments: 10,
-      points: 5,
-      objectID: 2,
-    },
-    {
-      title: 'Manifesto Comunista',
-      url: 'https://marxists.org/',
-      author: 'Karl Marx, Friedrich Engels',
-      num_comments: 2,
-      points: 5,
-      objectID: 3,
-    },
-  ];
 
   // Ao renderizar o componente pela primeira vez o useState busca o estado inicial como o value da key search armazenada no localStorage anteriormente ou em caso de não haver nada armazenado mostra o estado inicial de searchTerm com o valor 'React'
   const [searchTerm, setSearchTerm] = useState(
     localStorage.getItem('search') || 'React'
   );
+
+  // Recebe como valor inicial a lista
+  const [stories, setStories] = useState(initialStories)
+
+  // Filtra a lista conforme o valor e atribui a lista resultante à variável stories
+  const handleRemoveStory = item => {
+    const newStories = stories.filter(
+      story => item.objectID !== story.objectID
+    );
+
+    setStories(newStories);
+  }
 
   // useEffect administra o side-effect do componente que envolve a manipulação do localStorage. O primeiro argumento é a função = manipulação em si - do side=effect e o segundo argumento é o chamado array de dependência, que a cada vez que um elemento do array é modificado, a função de side=effect será chamada.
   useEffect(() => {
@@ -86,37 +100,57 @@ const App = () => {
 
       <InputWithLabel
         id="search"
-        label='Search'
         value={searchTerm}
+        isFocused
         onInputChange={handleSearch}
-      />
+      >
+        <Text /> 
+      </InputWithLabel>
 
       <hr />
 
       {/* instância de componente enviando o prop do array stories */}
       {/* enviando a variável que corresponde ao elemento da lista filtrado no search */}
-      <List list={searchedStories}/>
+      <List list={searchedStories} onRemoveItem={handleRemoveStory}/>
 
     </div>
   );
 }
 
-const InputWithLabel = ({ id,
-  label,
+const Text = () =>  (
+  'Search: '
+)
+
+const InputWithLabel = ({ 
+  id,
   value,
   type = 'text',
-  onInputChange,}) => (
+  onInputChange,
+  children,
+  isFocused,
+}) => {
+  const inputRef = useRef();
+  
+  useEffect(() => {
+    if (isFocused && inputRef.current) {
+      inputRef.current.focus()
+    }
+  })
+  
+  return (
+
   <>
-    <label htmlFor={id}>{label}: </label>
+    <label htmlFor={id}>{children}</label>
     &nbsp;
     <input
+      ref={inputRef}
       id={id}
       type={type}
       value={value}
       onChange={onInputChange}
       />
   </>
-)
+)}
 
 
 /* const Search = ({ search, onSearch }) => {
@@ -149,12 +183,24 @@ const InputWithLabel = ({ id,
 } */
 
 // componente funcional que recebe a props (um array), faz o map para gerar elementos
-const List = ({ list }) => 
-  list.map(item => <Item key={item.objectID} item={item} />);
+const List = ({ list, onRemoveItem }) => 
+  list.map(item => (
+    <Item 
+      key={item.objectID} 
+      item={item}
+      onRemoveItem={onRemoveItem} 
+    />
+    )  
+  );
     
     
     
-const Item = ({ item }) => (
+const Item = ({ item, onRemoveItem }) => {
+  const handleRemoveItem = () => {
+    onRemoveItem(item)
+  }
+
+  return (
       // key é um atributo importante a ser usado sempre com algum tipo de id único para garantir a fidelidade de organização de listas
       <div>
             <span>
@@ -163,8 +209,17 @@ const Item = ({ item }) => (
             <span> - {item.author}, </span>
             <span>{item.num_comments}, </span>
             <span>{item.points}</span>
+            <span>
+            &nbsp;
+              {/* Ao clicar no botão é chamado o handler que vai retirar este item */}
+              {/* Outra opção é o inline handler, que dispensa a implementação do handler no componente e resume a lógica a uma linha dentro do JSX */}
+              {/* Inline handler: <button type='button' onClick={() => onRemoveItem(item)}> */}
+              <button type='button' onClick={handleRemoveItem}>
+                Dismiss
+              </button>
+            </span>
       </div>
-  );
+  );}
 
 
 export default App;
