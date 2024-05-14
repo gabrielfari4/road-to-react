@@ -1,19 +1,8 @@
-import { useRef, useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
+import List from './components/List';
+import InputWithLabel from './components/InputWithLabel';
 
-
-
-/* const title = 'you'
-
-const welcome = {
-  greeting: 'Hey',
-  title: 'React',
-}
-
-function getTitle(title) {
-  return title;
-} */
 
 const initialStories = [
   {
@@ -50,7 +39,7 @@ const initialStories = [
   },
 ];
 
-const useSemiPersistentState = (key, initialState) => {}
+// const useSemiPersistentState = (key, initialState) => {}
 
 const App = () => {
 
@@ -121,38 +110,6 @@ const Text = () =>  (
   'Search: '
 )
 
-const InputWithLabel = ({ 
-  id,
-  value,
-  type = 'text',
-  onInputChange,
-  children,
-  isFocused,
-}) => {
-  const inputRef = useRef();
-  
-  useEffect(() => {
-    if (isFocused && inputRef.current) {
-      inputRef.current.focus()
-    }
-  })
-  
-  return (
-
-  <>
-    <label htmlFor={id}>{children}</label>
-    &nbsp;
-    <input
-      ref={inputRef}
-      id={id}
-      type={type}
-      value={value}
-      onChange={onInputChange}
-      />
-  </>
-)}
-
-
 /* const Search = ({ search, onSearch }) => {
   // useState que define e altera o value do input search
   const [searchTerm, setSearchTerm] = useState(''); 
@@ -181,45 +138,5 @@ const InputWithLabel = ({
     </div>
   )
 } */
-
-// componente funcional que recebe a props (um array), faz o map para gerar elementos
-const List = ({ list, onRemoveItem }) => 
-  list.map(item => (
-    <Item 
-      key={item.objectID} 
-      item={item}
-      onRemoveItem={onRemoveItem} 
-    />
-    )  
-  );
-    
-    
-    
-const Item = ({ item, onRemoveItem }) => {
-  const handleRemoveItem = () => {
-    onRemoveItem(item)
-  }
-
-  return (
-      // key é um atributo importante a ser usado sempre com algum tipo de id único para garantir a fidelidade de organização de listas
-      <div>
-            <span>
-              <a href={item.url}>{item.title}</a>
-            </span>
-            <span> - {item.author}, </span>
-            <span>{item.num_comments}, </span>
-            <span>{item.points}</span>
-            <span>
-            &nbsp;
-              {/* Ao clicar no botão é chamado o handler que vai retirar este item */}
-              {/* Outra opção é o inline handler, que dispensa a implementação do handler no componente e resume a lógica a uma linha dentro do JSX */}
-              {/* Inline handler: <button type='button' onClick={() => onRemoveItem(item)}> */}
-              <button type='button' onClick={handleRemoveItem}>
-                Dismiss
-              </button>
-            </span>
-      </div>
-  );}
-
 
 export default App;
