@@ -39,6 +39,15 @@ const initialStories = [
   },
 ];
 
+// função que simula uma API recebendo dados de fonte externa.
+/* const getAsyncStories = () => Promise.resolve({ data: { stories: initialStories } }); */
+const getAsyncStories = () => new Promise(resolve => 
+  setTimeout(
+    () => resolve({ data: { stories: initialStories } }),
+    5000
+  ) 
+); 
+
 // const useSemiPersistentState = (key, initialState) => {}
 
 const App = () => {
@@ -48,8 +57,18 @@ const App = () => {
     localStorage.getItem('search') || 'React'
   );
 
-  // Recebe como valor inicial a lista
-  const [stories, setStories] = useState(initialStories)
+  /* // Recebe como valor inicial a lista
+  const [stories, setStories] = useState(initialStories) */
+
+  // Recebe como valor inicial um array vazio para simular a captura dos dados de forma assíncrona.
+  const [stories, setStories] = useState([]);
+
+  // Once you start the application again, you should see a delayed rendering of the list. The initial state for the stories is an empty array. After the App component rendered, the side-effect hook runs once to fetch the asynchronous data. After resolving the promise and setting the data in the component’s state, the component renders again and displays the list of asynchronously loaded stories.
+  useEffect(() => {
+    getAsyncStories().then(result => {
+      setStories(result.data.stories);
+    })
+  }, []);
 
   // Filtra a lista conforme o valor e atribui a lista resultante à variável stories
   const handleRemoveStory = item => {
