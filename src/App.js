@@ -62,12 +62,20 @@ const App = () => {
 
   // Recebe como valor inicial um array vazio para simular a captura dos dados de forma assíncrona.
   const [stories, setStories] = useState([]);
+  // Recebe o valor de se os dados ainda estão sendo carregados
+  const [isLoading, setIsLoading] = useState(false);
+  // Recebe o valor de erro em caso de problemas no fetch
+  const [isError, setIsError] = useState(false);
 
   // Once you start the application again, you should see a delayed rendering of the list. The initial state for the stories is an empty array. After the App component rendered, the side-effect hook runs once to fetch the asynchronous data. After resolving the promise and setting the data in the component’s state, the component renders again and displays the list of asynchronously loaded stories.
   useEffect(() => {
+    setIsLoading(true)
+
     getAsyncStories().then(result => {
       setStories(result.data.stories);
+      setIsLoading(false)
     })
+    .catch(() => setIsError(true))
   }, []);
 
   // Filtra a lista conforme o valor e atribui a lista resultante à variável stories
@@ -117,9 +125,15 @@ const App = () => {
 
       <hr />
 
-      {/* instância de componente enviando o prop do array stories */}
-      {/* enviando a variável que corresponde ao elemento da lista filtrado no search */}
-      <List list={searchedStories} onRemoveItem={handleRemoveStory}/>
+      {isError && <p>Something went wrong...</p>}
+
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : (
+        // instância de componente enviando o prop do array stories
+        // enviando a variável que corresponde ao elemento da lista filtrado no search
+        <List list={searchedStories} onRemoveItem={handleRemoveStory}/>
+      )}
 
     </div>
   );
